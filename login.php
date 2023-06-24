@@ -1,20 +1,5 @@
 <?php
-//config
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: Content-Type'); // Ajout de cette ligne pour autoriser le champ d'en-tête "Content-Type"
-header('Content-Type: application/json');
-$servername = "localhost"; 
-$username = "clement"; 
-$password = "avocadoForever";
-$database = "avocado";
-
-//connect to db
-$conn = new mysqli($servername, $username, $password, $database);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Erreur de connexion à la base de données : " . $conn->connect_error);
-}
+include 'config.php';
 
 // Check if the request is a POST request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -33,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if ($result->num_rows > 0) {
         // User exists
-        $response = array('success' => true, 'message' => 'User exists');
+        $response = array('success' => true, 'message' => 'User exists', 'data' => $result->fetch_assoc());
         echo json_encode($response);
     } else {
         // User does not exist

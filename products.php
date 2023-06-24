@@ -1,19 +1,5 @@
 <?php
-//config
-header('Access-Control-Allow-Origin: *');
-header('Content-Type: application/json');
-$servername = "localhost"; 
-$username = "clement"; 
-$password = "avocadoForever";
-$database = "avocado";
-
-//connect to db
-$conn = new mysqli($servername, $username, $password, $database);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Erreur de connexion à la base de données : " . $conn->connect_error);
-}
+include 'config.php';
 
 // get all the products from the database
 $sql = "SELECT * FROM products";

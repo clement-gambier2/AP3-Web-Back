@@ -1,38 +1,30 @@
 <?php
-//config
-header('Access-Control-Allow-Origin: *');
-header('Content-Type: application/json');
-$servername = "localhost"; 
-$username = "clement"; 
-$password = "avocadoForever";
-$database = "avocado";
+include 'config.php';
 
-//connect to db
-$conn = new mysqli($servername, $username, $password, $database);
 
-// Check connection
-if ($conn->connect_error) {
-    die("Erreur de connexion à la base de données : " . $conn->connect_error);
+// Check if the request is a POST request
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get the email and password from the request body
+    $productData = json_decode(file_get_contents('php://input'), true);
+
+    // Prepare the SQL statement to check if the user exists
+    $stmt = $conn->prepare("SELECT * FROM products WHERE id = ?");
+    $stmt->bind_param("d", $productData["id"]);
+    $stmt->execute();
+
+    // Fetch the result
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        echo json_encode($result->fetch_assoc());
+    }
+} else {
+    // Request method is not POST
+    $response = array('success' => false, 'message' => 'Invalid request method');
+    echo json_encode($response);
 }
 
-// Check if product ID is provided
-if (isset($_GET['id'])) {
-    $productId = $_GET['id'];
-
-    // get the product from the database
-    $sql = "SELECT * FROM products WHERE id = '$productId'";
-    $result = $conn->query($sql);
-
-    // check errors
-    if (!$result) {
-        die("Erreur d'exécution de la requête : " . $conn->error);
-    }
-
-    $product = $result->fetch_assoc();
-
-    // Send product data
-    echo json_encode($product);
-} 
 //close connection
 $conn->close();
 ?>
+
